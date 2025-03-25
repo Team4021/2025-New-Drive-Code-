@@ -9,6 +9,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.math.util.Units;
@@ -18,14 +19,14 @@ public class SwerveCommand extends Command {
     private Swerve s_Swerve;    
     private DoubleSupplier translationSup;
     private DoubleSupplier strafeSup;
-    private DoubleSupplier rotationSup;
-    private DoubleSupplier dynamicHeadingSup;
+    private DoubleSupplier rotationXSup;
+    private DoubleSupplier rotationYSup;
     private BooleanSupplier robotCentricSup;
     private BooleanSupplier dampenSup;
     private PIDController rotationController;
     
 
-    public SwerveCommand(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, BooleanSupplier dampen, DoubleSupplier dynamicHeadingSup) {
+    public SwerveCommand(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationXSup, DoubleSupplier rotationYSup, BooleanSupplier robotCentricSup, BooleanSupplier dampen) {
         this.s_Swerve = s_Swerve;
         addRequirements(s_Swerve);
 
@@ -36,10 +37,11 @@ public class SwerveCommand extends Command {
 
         this.translationSup = translationSup;
         this.strafeSup = strafeSup;
-        this.rotationSup = rotationSup;
+        this.rotationXSup = rotationXSup;
+        this.rotationYSup = rotationYSup;
         this.robotCentricSup = robotCentricSup;
         this.dampenSup = dampen;
-        this.dynamicHeadingSup = dynamicHeadingSup;
+        
     }
 
     @Override
@@ -47,9 +49,11 @@ public class SwerveCommand extends Command {
         /* Get Values, Deadband, Dampen */
         double translationVal = MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.stickDeadband) * (dampenSup.getAsBoolean() ? 0.2 : 1);
         double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.stickDeadband) * (dampenSup.getAsBoolean() ? 0.2 : 1);
-        double rotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.stickDeadband) * (dampenSup.getAsBoolean() ? 0.2 : 1);
-        //TODO: Add code for dynamic heading- the supplier is a placeholder right now
-        double dynamicHeading = dynamicHeadingSup.getAsDouble();
+        double rotationVal = 0;
+        double rotationValX = MathUtil.applyDeadband(rotationXSup.getAsDouble(), Constants.stickDeadband) * (dampenSup.getAsBoolean() ? 0.2 : 1);
+        double rotationValY = MathUtil.applyDeadband(rotationYSup.getAsDouble(), Constants.stickDeadband) * (dampenSup.getAsBoolean() ? 0.2 : 1);
+        double dynamicHeading = Math.atan2(-rotationValY, rotationValX);
+        
         
      //heading direction state
         switch(States.driveState){
@@ -82,7 +86,7 @@ public class SwerveCommand extends Command {
             case standard:
             
                 //normal
-                rotationVal = rotationVal * Constants.Swerve.maxAngularVelocity;
+                rotationVal = rotationValX * Constants.Swerve.maxAngularVelocity;
                 break;
         }
 

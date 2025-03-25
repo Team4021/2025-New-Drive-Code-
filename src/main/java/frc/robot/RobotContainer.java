@@ -25,23 +25,28 @@ import frc.robot.subsystems.*;
  */
 public class RobotContainer {
     /* Controllers */
-    private final Joystick driver = new Joystick(0);
+    private final Joystick leftJoystick = new Joystick(1);
+    private final Joystick rightJoystick = new Joystick(0);
+
+
 
    /* Driver Controls */
 	private final int translationAxis = 1;
 	private final int strafeAxis = 0;
-	private final int rotationAxis = 2;
+	private final int rotationAxisX = 0;
+    private final int rotationAxisY = 1;
+
 
     /* Driver Buttons */
-    private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value);
-    private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
+    private final JoystickButton zeroGyro = new JoystickButton(rightJoystick, 11);
+    private final JoystickButton robotCentric = new JoystickButton(rightJoystick, 10);
 
-    private final JoystickButton dampen = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
+    private final JoystickButton dampen = new JoystickButton(leftJoystick, 3);
 
-    private final JoystickButton DynamicLock = new JoystickButton(driver, XboxController.Button.kX.value);
+    private final JoystickButton DynamicLock = new JoystickButton(rightJoystick, 6);
 
-    private final Trigger forwardHold = new Trigger(() -> (driver.getRawAxis(4) > 0.75));
-    private final Trigger backwardHold = new Trigger(() -> (driver.getRawAxis(4) < -0.75));
+    private final Trigger forwardHold = new Trigger(() -> (leftJoystick.getRawAxis(4) > 0.75));
+    private final Trigger backwardHold = new Trigger(() -> (leftJoystick.getRawAxis(4) < -0.75));
 
     /* Subsystems */
     private final PoseEstimator s_PoseEstimator = new PoseEstimator();
@@ -56,12 +61,12 @@ public class RobotContainer {
         s_Swerve.setDefaultCommand(
             new SwerveCommand(
                 s_Swerve, 
-                () -> -driver.getRawAxis(translationAxis), 
-                () -> -driver.getRawAxis(strafeAxis), 
-                () -> -driver.getRawAxis(rotationAxis), 
+                () -> -leftJoystick.getRawAxis(translationAxis), 
+                () -> -leftJoystick.getRawAxis(strafeAxis), 
+                () -> rightJoystick.getRawAxis(rotationAxisX), 
+                () -> rightJoystick.getRawAxis(rotationAxisY),
                 () -> robotCentric.getAsBoolean(),
-                () -> dampen.getAsBoolean(),
-                () -> 0 // Dynamic heading placeholder
+                () -> dampen.getAsBoolean()
             )
         );
 
