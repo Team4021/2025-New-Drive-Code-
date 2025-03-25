@@ -45,8 +45,8 @@ public class RobotContainer {
 
     private final JoystickButton DynamicLock = new JoystickButton(rightJoystick, 6);
 
-    private final Trigger forwardHold = new Trigger(() -> (leftJoystick.getRawAxis(4) > 0.75));
-    private final Trigger backwardHold = new Trigger(() -> (leftJoystick.getRawAxis(4) < -0.75));
+    //private final Trigger forwardHold = new Trigger(() -> (leftJoystick.getRawAxis(4) > 0.75));
+    //private final Trigger backwardHold = new Trigger(() -> (leftJoystick.getRawAxis(4) < -0.75));
 
     /* Subsystems */
     private final PoseEstimator s_PoseEstimator = new PoseEstimator();
@@ -96,14 +96,14 @@ public class RobotContainer {
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
 
     //Heading lock bindings
-        forwardHold.onTrue(
+      /*   forwardHold.onTrue(
             new InstantCommand(() -> States.driveState = States.DriveStates.forwardHold)).onFalse(
             new InstantCommand(() -> States.driveState = States.DriveStates.standard)
         );
         backwardHold.onTrue(
             new InstantCommand(() -> States.driveState = States.DriveStates.backwardHold)).onFalse(
             new InstantCommand(() -> States.driveState = States.DriveStates.standard)
-        );
+        ); */
         DynamicLock.onTrue(
             new InstantCommand(() -> States.driveState = States.DriveStates.DynamicLock)).onFalse(
             new InstantCommand(() -> States.driveState = States.DriveStates.standard)
